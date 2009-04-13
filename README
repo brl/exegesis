@@ -1,0 +1,116 @@
+Exegesis
+--------
+
+So you have an ssh public authentication key and you 'lost' the 
+private key.  Did you generate that key in the last two years on
+Debian or Ubuntu GNU/Lunix?  Yes?  Ok, great.  
+
+$ cat id_dsa.pub 
+ssh-dss AAAAB3NzaC1kc3MAAACBAIW0doTjIKPNwAjHogbLhXNxNlwdvHHKzFPgZ
+5cpwF4a2e8YYlEyXo8gyoub5c2s0f8B61ZNkowc9tcN+Iy1aiE2LBloxds3IwWNpZ
+8KnJruCX/mYbltUp3CNJP/8gmeL41akUddPJ5wg6pYjDY5z7Kd9lojhqKOn3qSPXZ
+JDJXJAAAAFQDZMKlBeKVX9/FCO5auyzPHxn6QnwAAAIBULtChrN1rGfAjIU8VZwQa
+rQNunGFDfstWNOcx0lvAm2DkQCVCFT8DUXlibHWQJJbeMk3DfOl02ItIAhMvTTAPM
+rb8vtFsB3Fcw7KAuK0cAJaY3R2S6/tBbWXch7SaaOQ4dxa+8hmEl54icW/me0H6Z0
+SEDYEm3j8pnAUnPAu/pgAAAIALkFjo4rsTTcSyW841Gdy+rhsH4St3dd4ZXiTdDVh
+wCbpBqSqiYxZO/gBHdCDAIs2uD8+GElpv7Q5Hx0g5JYLoBCpa1O8R2UAZMapZORRE
+umPRs6buJ4GMf33S5f/WSqdFaMo1+/67VkvUS/9Drtb7Mz3aI/QUIh1H3gfT0xFIm
+A== lamer@gnubuntu
+
+First you'll need the fingerprint.
+
+$ ssh-keygen -l -f ./id_dsa.pub
+1024 b2:f0:f6:47:19:64:ff:8e:8f:90:75:bd:57:6c:71:0c ./id_dsa.pub
+
+Now look for that fingerprint in the generated fingerprint database
+files.  You can just use 'grep' for this.
+
+$ grep b2:f0:f6:47:19:64:ff:8e:8f:90:75:bd:57:6c:71:0c dsa_1024_32_le.out 
+b2:f0:f6:47:19:64:ff:8e:8f:90:75:bd:57:6c:71:0c 25191 dsa 1024 32 0
+
+Oh, it's your lucky day!  You're on the list.
+
+The fingerprint database files have the following format:
+
+  fingerprint pid key_type key_bits arch big_endian
+
+  pid        The process id of the ssh-keygen which originally generated the key
+  key_type   Either 'dsa' or 'rsa' depending on the type of key
+  key_bits   The size of the key.  1024 and 2048 are common.
+  arch       Either 32 or 64 depending on the processor which the key was created on
+  big_endian Is 1 if the key was generated on a big endian box or 0 otherwise
+
+So, the key we matched is a 1024 bit DSA key, generated on a 32 bit little endian
+processor.  That sounds about right.
+
+$ ./exegesis 
+Usage: ./exegesis [options]
+Options:
+  -B            Select big endian target (default is little endian target).
+  -A            Selecet 64 bit target (default is 32 bit target)
+  -o <file>     Output file.
+  -t (dsa|rsa)  Type of key(s) to generate (default is rsa)
+  -b bits       Key size to generate in bits (default is 1024 bits)
+  -g            Generate all keys for a range of pids (all pids by default)
+  -r start,end  Specify a pid range to generate (default is 1,32768)
+  -p pid        Generate a key for a chosen pid value
+
+
+$ ./exegesis -t dsa -b 1024 -p 25191
+-----BEGIN DSA PRIVATE KEY-----
+MIIBugIBAAKBgQCFtHaE4yCjzcAIx6IGy4VzcTZcHbxxysxT4GeXKcBeGtnvGGJR
+Ml6PIMqLm+XNrNH/AetWTZKMHPbXDfiMtWohNiwZaMXbNyMFjaWfCpya7gl/5mG5
+bVKdwjST//IJni+NWpFHXTyecIOqWIw2Oc+ynfZaI4aijp96kj12SQyVyQIVANkw
+qUF4pVf38UI7lq7LM8fGfpCfAoGAVC7QoazdaxnwIyFPFWcEGq0DbpxhQ37LVjTn
+MdJbwJtg5EAlQhU/A1F5Ymx1kCSW3jJNw3zpdNiLSAITL00wDzK2/L7RbAdxXMOy
+gLitHACWmN0dkuv7QW1l3Ie0mmjkOHcWvvIZhJeeInFv5ntB+mdEhA2BJt4/KZwF
+JzwLv6YCgYALkFjo4rsTTcSyW841Gdy+rhsH4St3dd4ZXiTdDVhwCbpBqSqiYxZO
+/gBHdCDAIs2uD8+GElpv7Q5Hx0g5JYLoBCpa1O8R2UAZMapZORREumPRs6buJ4GM
+f33S5f/WSqdFaMo1+/67VkvUS/9Drtb7Mz3aI/QUIh1H3gfT0xFImAIUQOZiUdQQ
+YO/Yg/6nRo4hghj28Tg=
+-----END DSA PRIVATE KEY-----
+
+Whoah?! Is that really the private key?  Let's compare it to the
+original key generated with ssh-keygen
+
+$ ./exegesis -t dsa -b 1024 -p 25191 > key.out
+$ md5sum id_dsa key.out
+0aa477a9a01c6724708f9f362bcf0f7d  id_dsa
+0aa477a9a01c6724708f9f362bcf0f7d  key.out
+
+
+Generating Databases
+--------------------
+
+$ ./exegesis -g -t dsa -b 1024 -o dsa_1024_32_le.out
+
+Unlike inferior competing products, Exegesis models the backdoored PRNG
+in Debian OpenSSL.  It uses a version of the OpenSSL random number and
+key generating code that can be configured to behave like any of the 
+hardware platforms that affect the generated random numbers.
+
+This means you can generate databases for each different relevant hardware
+configuration without actually needing to run it on those architectures.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+WARNING: Generating your own databases takes a very long time and may 
+         cause side effects such as acute boredom and drowsiness.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Since we know you're anxious to get started recovering all those misplaced
+private SSH keys, this release of Exegesis conveniently includes, right out
+of the box, ten starter databases at no extra charge!
+
+$ md5 keysets/*
+MD5 (keysets/dsa_1024_32_be.out) = d422aa60e3d6180ec65adb7179ebe43d
+MD5 (keysets/dsa_1024_32_le.out) = d6f1e5f4d5dd9e84a05de47cc9e0e81a
+MD5 (keysets/dsa_1024_64_le.out) = 89d34fe52f083c7e0c2297c2d8439bbc
+MD5 (keysets/dsa_2048_32_le.out) = b81ca4cd84613c0fa19056036153fc62
+MD5 (keysets/dsa_2048_64_le.out) = f914df33f27a11d7b2ab06446c6c13ec
+MD5 (keysets/rsa_1024_32_be.out) = f5a13ffcbc63206d1c90850e2ad2e052
+MD5 (keysets/rsa_1024_32_le.out) = 082b47d57e1d77366ce3795359926440
+MD5 (keysets/rsa_1024_64_le.out) = 18c80767c00db8130da8a77f7e81f448
+MD5 (keysets/rsa_2048_32_le.out) = 977b88495603c860abbd48a47847065a
+MD5 (keysets/rsa_2048_64_le.out) = dcdd098089281388e1c3bc935dec5b7e
