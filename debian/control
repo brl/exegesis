@@ -1,0 +1,21 @@
+Source: exegesis
+Section: security
+Priority: extra
+Maintainer: Jacob Appelbaum <jacob@appelbaum.net>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.7.3
+Homepage: http://github.com/brl/exegesis/
+
+Package: exegesis
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A toolkit for abusing the broken PRNG in Debian OpenSSL
+ Do you want to recover the private half of a weak Debain SSH key?
+ Exegesis is the tool to help you with the job. You simply need to set the following:
+  pid        The process id of the ssh-keygen which originally generated the key
+  key_type   Either 'dsa' or 'rsa' depending on the type of key
+  key_bits   The size of the key.  1024 and 2048 are common.
+  arch       Either 32 or 64 depending on the processor which the key was created on
+  big_endian Is 1 if the key was generated on a big endian box or 0 otherwise
+ Exegisis comes with a precomputed set of common keys.
+ 

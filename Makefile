@@ -1,7 +1,12 @@
 
 EXEGESIS_OBJS=exegesis.o
 SSHTOOL_OBJS=sshtool.o
+INCLUDED_KEYSETS=keysets
 all: $(EXEGESIS_OBJS) exegesis 
+install: all
+	install -d $(DESTDIR)/usr/share/exegesis/
+	install exegesis $(DESTDIR)/usr/bin/
+	cp -r $(INCLUDED_KEYSETS) $(DESTDIR)/usr/share/exegesis/
 
 LD=gcc
 LIBS=-lcrypto

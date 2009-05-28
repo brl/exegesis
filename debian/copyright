@@ -1,0 +1,19 @@
+This package was debianized by Jacob Appelbaum <jacob@appelbaum.net> on
+Thu, 28 May 2009 00:57:22 -0400.
+
+It was downloaded from <http://github.com/brl/exegesis/>
+
+Upstream Author(s):
+
+    Bruce Leidl <bruce@netifera.com>
+
+Copyright:
+
+    <Copyright (C) 2009 Bruce Leidl>
+
+License:
+
+    MIT license, see included COPYING file
+
+The Debian packaging is (C) 2009, Jacob Appelbaum <jacob@appelbaum.net> and
+is licensed under the same license as Exegesis, see COPYING.

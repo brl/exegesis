@@ -1,0 +1,5 @@
+To make a Debian package, simply use the debian/ directory as you'd expect:
+# remove .git files first or dpkg will complain
+$ cd ~/exegesis/
+$ dpkg-buildpackage -rfakeroot
+$ dpkg -i exegesis*.deb

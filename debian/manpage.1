@@ -1,0 +1,65 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.TH EXEGESIS SECTION "May 28, 2009"
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+exegesis \- Quickly recover weak ssh private key material
+.SH SYNOPSIS
+.B exegesis
+.RI [ -BAotbgrp ]
+.br
+.SH DESCRIPTION
+This manual page documents briefly the
+.B \fBexegesis\fP
+command. Exegesis is a toolkit for abusing the broken PRNG in Debian OpenSSL.
+.SH OPTIONS
+.TP
+.B \-B
+Select big endian target (default is little endian target).
+.TP
+.B \-A
+Select 64 bit target (default is 32 bit target).
+.TP
+.B \-o <file>
+Output file.
+.TP
+.B \-t (dsa|rsa)
+Type of key(s) to generate (default is rsa).
+.TP
+.B \-b bits
+Key size to generate in bits (default is 1024 bits).
+.TP
+.B \-g
+Generate all keys for a range of pids (all pids by default).
+.TP
+.B \-r start,end
+Specify a pid range to generate (default is 1,32768).
+.TP
+.B \-p pid
+Generate a key for a chosen pid value.
+.br
+.SH EXAMPLES
+.TP
+Recover the 1024bit little endian (32bit target) DSA private key for PID 25191:
+.B ./exegesis \-t dsa \-b 1024 \-p 25191
+.TP
+Generate all 4096bit big endian (64bit target) RSA keys for all possible PIDs:
+.B ./exegesis \-t rsa \-b 4096 -o rsa_2048_64_le.out
+.TP
+Search through a previously generated key databases for a given public key:
+.B grep bd:57:6c:71:0c /usr/share/exegesis/dsa_1024_32_le.out
+.br
+.SH AUTHOR
+exegesis was written by Bruce Leidl <bruce@netifera.com>.
+.PP
+This manual page was written by Jacob Appelbaum <jacob@appelbaum.net>,
+for the Debian project (but may be used by others).
