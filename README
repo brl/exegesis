@@ -114,3 +114,8 @@ MD5 (keysets/rsa_1024_32_le.out) = 082b47d57e1d77366ce3795359926440
 MD5 (keysets/rsa_1024_64_le.out) = 18c80767c00db8130da8a77f7e81f448
 MD5 (keysets/rsa_2048_32_le.out) = 977b88495603c860abbd48a47847065a
 MD5 (keysets/rsa_2048_64_le.out) = dcdd098089281388e1c3bc935dec5b7e
+
+ps:
+
+This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit (http://www.openssl.org/)
+
