@@ -20,7 +20,7 @@ static void usage(char *name) {
 	fprintf(stderr, "Usage: %s [options]\n", name);
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "  -B            Select big endian target (default is little endian target).\n");
-	fprintf(stderr, "  -A            Selecet 64 bit target (default is 32 bit target)\n");
+	fprintf(stderr, "  -A            Select 64 bit target (default is 32 bit target)\n");
 	fprintf(stderr, "  -o <file>     Output file.\n");
 	fprintf(stderr, "  -t (dsa|rsa)  Type of key(s) to generate (default is rsa)\n");
 	fprintf(stderr, "  -b bits       Key size to generate in bits (default is 1024 bits)\n");
